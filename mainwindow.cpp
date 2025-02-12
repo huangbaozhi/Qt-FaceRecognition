@@ -22,8 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     initUi();
-    //initUiTest();
-    //initOpenCV();
     createDatabase();
 }
 
@@ -50,19 +48,16 @@ void MainWindow::initUi()
         return;
     }
 
-    // 启动视频流显示
-    //startVideoStream();
-
     // 采集人脸
 //     QTimer *timer = new QTimer(this);
 //     connect(timer, &QTimer::timeout, this, &MainWindow::startVideoStream);
 //     timer->start(30); // 每30毫秒更新一次
 
-   // --------------------------------
+   // 人脸识别
    // 设置定时器每隔 30 毫秒触发一次
     QTimer *timer = new QTimer(this);
-    //connect(timer, &QTimer::timeout, this, &MainWindow::updateFrame);
-    connect(timer, &QTimer::timeout, this, &MainWindow::processFrame);
+    connect(timer, &QTimer::timeout, this, &MainWindow::updateFrame);
+    //connect(timer, &QTimer::timeout, this, &MainWindow::processFrame);
     timer->start(30);  // 每 30 毫秒捕获一次图像帧
 
     // 训练人脸识别模型
@@ -186,17 +181,6 @@ void MainWindow::updateFrame()
     ui->imageLabel->setPixmap(QPixmap::fromImage(img));
 }
 
-void MainWindow::updateFrameTest()
-{
-
-}
-
-void MainWindow::recognizeFace()
-{
-
-
-}
-
 void MainWindow::trainFaceRecognizer()
 {
     // 假设目标图像已经保存为 targetFace.jpg
@@ -230,57 +214,6 @@ void MainWindow::trainFaceRecognizer()
     model->train(images, labels);
     model->save("face_model.xml");  // 保存训练好的模型
     qDebug() << "Training complete and model saved!";
-}
-
-void MainWindow::openDatabase()
-{
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("faces.db");
-
-    if (!db.open()) {
-        qDebug() << "Error: Could not open database!";
-    } else {
-        qDebug() << "Opened database successfully!";
-    }
-}
-
-void MainWindow::storeFaceInDatabase(const std::string &name, const cv::Mat &faceDescriptor)
-{
-
-}
-
-void MainWindow::loadFacesFromDatabase()
-{
-
-}
-
-void MainWindow::trainFaceRecognizer(const cv::Mat &face, int label)
-{
-
-}
-
-void MainWindow::initOpenCV()
-{
-    // 加载人脸检测分类器
-    if (!faceCascade.load("E:\\Qt\\openCV3.4.12\\opencv-3.4.5\\data\\haarcascades\\haarcascade_frontalface_default.xml")) {
-        qDebug() << "Error: Could not load classifier!";
-        return;
-    }
-
-    // 初始化人脸识别模型
-    model = cv::face::LBPHFaceRecognizer::create();
-
-    // 打开摄像头
-    cap.open(0);
-    if (!cap.isOpened()) {
-        qDebug() << "Error: Cannot open the camera!";
-        return;
-    }
-
-    // 设置定时器来定期捕获图像
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &MainWindow::processFrame);
-    timer->start(33); // 每 33 毫秒捕获一次帧 (大约每秒 30 帧)
 }
 
 void MainWindow::createDatabase()
